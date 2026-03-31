@@ -3,339 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>我的世界 · 宝箱抽奖模拟器 | 豪华战利品库</title>
+    <title>我的世界 · 宝箱抽奖模拟器 | 十连 | 图鉴 | 成就</title>
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
-
-        /* Minecraft 像素风基调 */
+        * { box-sizing: border-box; user-select: none; }
         body {
             background: #3b2a1f url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" fill="#5c3e2a"/><rect x="2" y="2" width="28" height="28" fill="#7c5e3a"/><rect x="8" y="8" width="16" height="16" fill="#9c7e4a"/></svg>');
-            font-family: 'Courier New', 'Minecraft', monospace;
-            margin: 0;
-            padding: 24px 16px;
-            color: #f0f0e0;
-            image-rendering: crisp-edges;
+            font-family: 'Courier New', monospace; margin: 0; padding: 24px 16px; color: #f0f0e0;
         }
-
         .simulator-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #2c2418e6;
-            backdrop-filter: blur(2px);
-            border-radius: 0;
-            border: 4px solid #5e4b32;
-            box-shadow: 0 0 0 2px #1e150c, inset 0 0 0 2px #b89a6e;
-            padding: 1.5rem;
+            max-width: 1600px; margin: 0 auto; background: #2c2418e6; backdrop-filter: blur(2px);
+            border: 4px solid #5e4b32; box-shadow: 0 0 0 2px #1e150c, inset 0 0 0 2px #b89a6e; padding: 1.5rem;
         }
-
-        h1 {
-            font-family: 'Courier New', monospace;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 0 0 0.25rem 0;
-            background: #2d2218;
-            display: inline-block;
-            padding: 0.2rem 1rem;
-            border: 2px solid #b47c44;
-            color: #ffd966;
-            text-shadow: 2px 2px 0 #4a2a10;
-            letter-spacing: 1px;
-        }
-
-        .sub {
-            color: #cfb284;
-            font-size: 0.85rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #d9a13b;
-            padding-left: 12px;
-            background: #1f1912aa;
-            display: inline-block;
-        }
-
-        .resources-panel {
-            background: #1f1a12;
-            border-radius: 0;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            border: 2px solid #8b6946;
-            box-shadow: inset 0 1px 0 #5c432a, 0 3px 0 #0a0602;
-        }
-
-        .resource-stats {
-            display: flex;
-            gap: 1.8rem;
-            flex-wrap: wrap;
-        }
-
-        .resource-item {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            background: #0f0c08;
-            padding: 6px 16px;
-            border: 1px solid #b47c44;
-            font-weight: bold;
-        }
-
-        .resource-label {
-            font-size: 0.85rem;
-            color: #e6c394;
-        }
-
-        .resource-value {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #f5d742;
-            line-height: 1;
-        }
-
-        .btn-reset {
-            background: #5c3e2a;
-            border: none;
-            color: #f0dba0;
-            padding: 6px 18px;
-            cursor: pointer;
-            font-weight: bold;
-            font-family: monospace;
-            border: 2px solid #c28a4b;
-            box-shadow: 0 2px 0 #2f1e0e;
-            transition: 0.05s linear;
-        }
-        .btn-reset:active {
-            transform: translateY(2px);
-            box-shadow: none;
-        }
-
-        .packs-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .pack-card {
-            flex: 1;
-            min-width: 260px;
-            background: #2c221ad9;
-            border-radius: 0;
-            padding: 1.2rem 1.5rem 1.8rem;
-            border: 3px solid #84613c;
-            border-top: 6px solid #e7a24e;
-            box-shadow: inset 0 0 0 1px #c99a5e, 0 5px 0 #0e0903;
-        }
-
-        .pack-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            font-family: monospace;
-        }
-        .pack-price {
-            font-size: 1rem;
-            background: #1a130b;
-            padding: 4px 12px;
-            border: 1px solid #b47c44;
-        }
-        .pity-info {
-            background: #1f1912;
-            border-left: 3px solid #f5b642;
-            padding: 8px 12px;
-            margin: 12px 0;
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-        }
-        .btn-open {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            background: #5f7543;
-            border: none;
-            color: #f9eec1;
-            cursor: pointer;
-            font-family: monospace;
-            border-bottom: 4px solid #2c3a1a;
-            transition: 0.05s linear;
-        }
-        .btn-open:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        .result-area {
-            background: #1f1912;
-            border: 3px solid #8b6946;
-            padding: 1.2rem;
-            margin-bottom: 2rem;
-        }
-        .result-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            background: #5c3e2a;
-            display: inline-block;
-            padding: 0 12px;
-            border: 1px solid #dba247;
-        }
-        .cards-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: flex-start;
-        }
-        .card-item {
-            background: #2c251e;
-            border-radius: 0;
-            padding: 8px 12px;
-            min-width: 160px;
-            flex: 1 0 auto;
-            max-width: 200px;
-            border-left: 8px solid;
-            border-bottom: 2px solid #5a3e24;
-        }
+        /* 动画 */
+        @keyframes shake { 0% { transform: translate(1px,1px); } 25% { transform: translate(-1px,-2px); } 50% { transform: translate(-2px,1px); } 75% { transform: translate(1px,-1px); } 100% { transform: translate(0,0); } }
+        .shake-effect { animation: shake 0.2s ease-in-out 0s 2; }
+        @keyframes flash { 0% { background-color: rgba(255,255,200,0); box-shadow: 0 0 0 rgba(255,215,0,0); } 50% { background-color: rgba(255,255,100,0.6); box-shadow: 0 0 20px gold; } 100% { background-color: rgba(255,255,200,0); box-shadow: 0 0 0 rgba(255,215,0,0); } }
+        .flash-effect { animation: flash 0.6s ease-out; }
+        @keyframes chestOpen { 0% { transform: scale(0.9); opacity: 0.6; } 80% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
+        .chest-animation { animation: chestOpen 0.3s ease-out; }
+        /* 布局 */
+        h1 { font-size: 1.8rem; background: #2d2218; display: inline-block; padding: 0.2rem 1rem; border: 2px solid #b47c44; color: #ffd966; text-shadow: 2px 2px 0 #4a2a10; margin: 0 0 0.25rem 0; }
+        .sub { color: #cfb284; font-size: 0.85rem; margin-bottom: 1.5rem; border-left: 4px solid #d9a13b; padding-left: 12px; background: #1f1912aa; display: inline-block; }
+        .resources-panel { background: #1f1a12; padding: 1rem 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; border: 2px solid #8b6946; box-shadow: inset 0 1px 0 #5c432a, 0 3px 0 #0a0602; }
+        .resource-stats { display: flex; gap: 1.8rem; flex-wrap: wrap; }
+        .resource-item { display: flex; align-items: baseline; gap: 8px; background: #0f0c08; padding: 6px 16px; border: 1px solid #b47c44; font-weight: bold; }
+        .resource-value { font-size: 1.4rem; font-weight: bold; color: #f5d742; }
+        .btn-reset, .btn-free { background: #5c3e2a; border: none; color: #f0dba0; padding: 6px 18px; cursor: pointer; font-weight: bold; font-family: monospace; border: 2px solid #c28a4b; box-shadow: 0 2px 0 #2f1e0e; transition: 0.05s linear; }
+        .btn-reset:active, .btn-free:active { transform: translateY(2px); box-shadow: none; }
+        .packs-row { display: flex; flex-wrap: wrap; gap: 2rem; margin-bottom: 2rem; }
+        .pack-card { flex: 1; min-width: 280px; background: #2c221ad9; padding: 1.2rem 1.5rem 1.8rem; border: 3px solid #84613c; border-top: 6px solid #e7a24e; box-shadow: inset 0 0 0 1px #c99a5e, 0 5px 0 #0e0903; }
+        .pack-title { font-size: 1.5rem; font-weight: bold; display: flex; justify-content: space-between; align-items: baseline; }
+        .pack-price { font-size: 0.9rem; background: #1a130b; padding: 4px 12px; border: 1px solid #b47c44; }
+        .pity-info { background: #1f1912; border-left: 3px solid #f5b642; padding: 8px 12px; margin: 12px 0; font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .btn-group { display: flex; gap: 12px; margin-top: 8px; }
+        .btn-open { flex: 1; padding: 12px; font-size: 1.1rem; font-weight: bold; background: #5f7543; border: none; color: #f9eec1; cursor: pointer; border-bottom: 4px solid #2c3a1a; transition: 0.05s linear; }
+        .btn-open:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .result-area { background: #1f1912; border: 3px solid #8b6946; padding: 1.2rem; margin-bottom: 2rem; }
+        .result-title { font-size: 1.2rem; margin-bottom: 1rem; background: #5c3e2a; display: inline-block; padding: 0 12px; border: 1px solid #dba247; }
+        .cards-grid { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; max-height: 400px; overflow-y: auto; padding: 4px; }
+        .card-item { background: #2c251e; padding: 8px 12px; min-width: 150px; flex: 1 0 auto; max-width: 200px; border-left: 8px solid; border-bottom: 2px solid #5a3e24; transition: all 0.1s; }
         .rarity-Common { border-left-color: #8b8b8b; background: #2b2a24; }
         .rarity-Rare { border-left-color: #4c6eff; background: #1f2b36; }
         .rarity-Epic { border-left-color: #aa4cf5; background: #2e1e3a; }
         .rarity-Legendary { border-left-color: #f5bc42; background: #3e2e18; box-shadow: 0 0 4px #ffcd6e; }
-        .card-name {
-            font-weight: bold;
-            font-size: 1rem;
-            font-family: monospace;
-        }
-        .card-detail {
-            font-size: 0.7rem;
-            color: #cdc6b0;
-            display: flex;
-            gap: 10px;
-            margin-top: 6px;
-        }
-
-        .info-split {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-        .history-box, .stats-box {
-            background: #1f1912e6;
-            border: 2px solid #8b6946;
-            padding: 1rem;
-            flex: 1;
-        }
-        .history-list {
-            max-height: 220px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-        }
-        .history-entry {
-            padding: 6px 4px;
-            border-bottom: 1px solid #5e4b32;
-            font-family: monospace;
-        }
-        .stat-number {
-            color: #f5d742;
-            font-weight: bold;
-        }
-        button.small {
-            background: #4a3a28;
-            border: none;
-            color: #f0e0aa;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-family: monospace;
-            border: 1px solid #b47c44;
-        }
-        .editor-area {
-            margin-top: 2rem;
-            background: #1e1710e6;
-            border: 2px solid #7a5a3a;
-            padding: 1rem;
-        }
-        textarea {
-            width: 100%;
-            background: #14100c;
-            color: #e5e0b0;
-            border: 2px solid #b47c44;
-            font-family: monospace;
-            font-size: 12px;
-            height: 220px;
-            resize: vertical;
-        }
-        .btn-load {
-            background: #6c542c;
-            border: none;
-            padding: 6px 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .warning {
-            font-size: 0.7rem;
-            color: #e8b45a;
-        }
-        footer {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 1.5rem;
-            border-top: 1px solid #5e4b32;
-            padding-top: 10px;
-        }
+        .ten-stats { background: #0f191f; margin-top: 10px; padding: 6px 12px; display: flex; gap: 20px; font-size: 0.85rem; border-radius: 4px; }
+        .info-split { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1rem; }
+        .history-box, .stats-box { background: #1f1912e6; border: 2px solid #8b6946; padding: 1rem; flex: 1; }
+        .history-list { max-height: 220px; overflow-y: auto; font-size: 0.8rem; }
+        .history-entry { padding: 6px 4px; border-bottom: 1px solid #5e4b32; font-family: monospace; }
+        .stat-number { color: #f5d742; font-weight: bold; }
+        button.small { background: #4a3a28; border: none; color: #f0e0aa; padding: 4px 12px; cursor: pointer; font-family: monospace; border: 1px solid #b47c44; }
+        .extra-panels { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; }
+        .achievement-box, .collection-box { background: #1f1912e6; border: 2px solid #8b6946; padding: 1rem; flex: 1; min-width: 250px; }
+        .achievement-list { max-height: 200px; overflow-y: auto; font-size: 0.8rem; }
+        .achievement { padding: 5px; margin: 4px 0; border-left: 3px solid; background: #2a241c; }
+        .achievement.locked { opacity: 0.5; border-left-color: #5a4a32; }
+        .achievement.unlocked { border-left-color: #f5bc42; background: #3e321e; }
+        .collection-grid { max-height: 250px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; font-size: 0.75rem; }
+        .collection-item { background: #2c241c; padding: 4px 6px; border-radius: 4px; display: flex; justify-content: space-between; }
+        .collection-item.owned { border-left: 3px solid #5f9; }
+        .collection-item.missing { border-left: 3px solid #933; opacity: 0.7; }
+        .badge { background: #c9a03d; color: #1e1a10; border-radius: 12px; padding: 0 6px; font-size: 0.7rem; font-weight: bold; }
+        .editor-area { margin-top: 2rem; background: #1e1710e6; border: 2px solid #7a5a3a; padding: 1rem; }
+        textarea { width: 100%; background: #14100c; color: #e5e0b0; border: 2px solid #b47c44; font-family: monospace; font-size: 12px; height: 220px; resize: vertical; }
+        .btn-load { background: #6c542c; border: none; padding: 6px 20px; cursor: pointer; font-weight: bold; }
+        .warning { font-size: 0.7rem; color: #e8b45a; }
+        footer { font-size: 0.7rem; text-align: center; margin-top: 1rem; border-top: 1px solid #5e4b32; padding-top: 10px; }
         ::-webkit-scrollbar { width: 8px; background: #2a241c; }
         ::-webkit-scrollbar-thumb { background: #b87c44; }
     </style>
 </head>
 <body>
 <div class="simulator-container">
-    <h1>⛏️ 我的世界 · 宝箱抽奖模拟器</h1>
-    <div class="sub">木质宝箱 · 下界合金宝箱 | 传说保底机制 | 50+ 豪华战利品库</div>
+    <h1>⛏️ 我的世界 · 豪华宝箱抽奖</h1>
+    <div class="sub">十连开箱 | 每日免费 | 成就图鉴 | 音效动画</div>
 
     <div class="resources-panel">
         <div class="resource-stats">
-            <div class="resource-item">💎 <span class="resource-label">绿宝石</span> <span class="resource-value" id="emeraldAmount">2000</span></div>
-            <div class="resource-item">🔑 <span class="resource-label">木质钥匙</span> <span class="resource-value" id="woodKey">5</span></div>
-            <div class="resource-item">⚜️ <span class="resource-label">合金钥匙</span> <span class="resource-value" id="netheriteKey">2</span></div>
+            <div class="resource-item">💎 <span class="resource-label">绿宝石</span> <span class="resource-value" id="emeraldAmount">1500</span></div>
+            <div class="resource-item">🔑 <span class="resource-label">木质钥匙</span> <span class="resource-value" id="woodKey">3</span></div>
+            <div class="resource-item">⚜️ <span class="resource-label">合金钥匙</span> <span class="resource-value" id="netheriteKey">1</span></div>
         </div>
-        <button class="btn-reset" id="resetResourcesBtn">⟳ 重置资源</button>
+        <div><button class="btn-free" id="dailyFreeBtn">🎁 每日免费宝箱</button>
+        <button class="btn-reset" id="resetResourcesBtn">⟳ 重置资源</button></div>
     </div>
 
     <div class="packs-row">
         <div class="pack-card">
             <div class="pack-title">🪵 木质宝箱 <span class="pack-price">100绿宝石 / 1木钥匙</span></div>
-            <div class="pity-info"><span>🏆 传说保底</span><span id="woodElitePity">0</span> / 60</div>
-            <div class="pity-info"><span>✨ 史诗+保底</span><span id="woodSpecialPity">0</span> / 10</div>
-            <button class="btn-open" data-pack="wood">🔓 开启宝箱</button>
+            <div class="pity-info"><span>🏆 传说保底</span><span id="woodElitePity">0</span> / 64</div>
+            <div class="pity-info"><span>✨ 史诗+保底</span><span id="woodSpecialPity">0</span> / 14</div>
+            <div class="btn-group">
+                <button class="btn-open" data-pack="wood" data-multi="1">单开</button>
+                <button class="btn-open" data-pack="wood" data-multi="10">🔟 十连开</button>
+            </div>
         </div>
         <div class="pack-card">
             <div class="pack-title">🔥 下界合金宝箱 <span class="pack-price">330绿宝石 / 1合金钥匙</span></div>
-            <div class="pity-info"><span>🏆 传说保底</span><span id="netheriteElitePity">0</span> / 60</div>
-            <div class="pity-info"><span>✨ 史诗+保底</span><span id="netheriteSpecialPity">0</span> / 10</div>
-            <button class="btn-open" data-pack="netherite">⚡ 开启宝箱</button>
+            <div class="pity-info"><span>🏆 传说保底</span><span id="netheriteElitePity">0</span> / 64</div>
+            <div class="pity-info"><span>✨ 史诗+保底</span><span id="netheriteSpecialPity">0</span> / 14</div>
+            <div class="btn-group">
+                <button class="btn-open" data-pack="netherite" data-multi="1">单开</button>
+                <button class="btn-open" data-pack="netherite" data-multi="10">🔟 十连开</button>
+            </div>
         </div>
     </div>
 
     <div class="result-area" id="resultArea">
         <div class="result-title">📦 本次掉落物</div>
-        <div id="packResultContainer" class="cards-grid">
-            <div style="color:#b49b6e; text-align:center; width:100%;">点击宝箱开始摸奖</div>
-        </div>
+        <div id="packResultContainer" class="cards-grid"></div>
+        <div id="tenStats" class="ten-stats" style="display:none;"></div>
     </div>
 
     <div class="info-split">
         <div class="history-box">
             <div>📜 最近记录 <button class="small" id="clearHistoryBtn">清空</button></div>
-            <div id="historyList" class="history-list">
-                <div style="color:#b49b6e;">暂无抽奖记录</div>
-            </div>
+            <div id="historyList" class="history-list"></div>
         </div>
         <div class="stats-box">
             <div>📊 全局统计 <button class="small" id="resetStatsBtn">重置统计</button></div>
@@ -350,6 +133,17 @@
         </div>
     </div>
 
+    <div class="extra-panels">
+        <div class="achievement-box">
+            <div>🏆 成就系统 <button class="small" id="resetAchievementsBtn">重置成就</button></div>
+            <div id="achievementList" class="achievement-list">加载中...</div>
+        </div>
+        <div class="collection-box">
+            <div>📖 战利品图鉴 <button class="small" id="resetCollectionBtn">重置图鉴</button></div>
+            <div id="collectionGrid" class="collection-grid">加载中...</div>
+        </div>
+    </div>
+
     <div class="editor-area">
         <div class="editor-header" style="display: flex; justify-content: space-between;">
             <span>📝 战利品表编辑器 (JSON格式) — 自由修改，已内置50+物品</span>
@@ -358,31 +152,53 @@
         <textarea id="cardsJsonEditor"></textarea>
         <div class="warning">⚠️ 稀有度必须为 "Common", "Rare", "Epic", "Legendary" 。每种稀有度至少一件物品，否则抽卡可能出错。下方已预置大量 Minecraft 经典物品/生物。</div>
     </div>
-    <footer>⚡ 每箱掉落5件物品 · 传说保底: 59箱未出传说 → 第60箱必出传说 · 史诗保底: 9箱未出史诗/传说 → 第10箱必出史诗或传说 · 合金宝箱传说概率更高！</footer>
+    <footer>⚡ 每箱掉落5件物品 · 传说保底: 63箱未出传说 → 第64箱必出传说 · 史诗保底: 13箱未出史诗/传说 → 第14箱必出史诗或传说 · 十连必出至少1个史诗/传说 | 每日免费宝箱 | 成就图鉴自动保存</footer>
 </div>
 
 <script>
-    // ---------- 全局资源 ----------
-    let emeralds = 2000;
-    let woodKey = 5;
-    let netheriteKey = 2;
-    
-    let pity = {
-        wood: { elite: 0, special: 0 },
-        netherite: { elite: 0, special: 0 }
-    };
-    
-    let stats = {
-        totalPacks: 0,
-        itemsByRarity: { Common:0, Rare:0, Epic:0, Legendary:0 }
-    };
-    
+    // ---------- 全局数据 ----------
+    let emeralds = 1500, woodKey = 3, netheriteKey = 1;
+    let pity = { wood: { elite: 0, special: 0 }, netherite: { elite: 0, special: 0 } };
+    let stats = { totalPacks: 0, itemsByRarity: { Common:0, Rare:0, Epic:0, Legendary:0 } };
     let history = [];
     let lootTable = [];
-    
-    // ---------- 超豪华战利品库 (50+ 物品) ----------
+    let collection = {};   // { "物品名": { count, rarity, type, desc } }
+    let achievements = {
+        pack10: false, pack50: false, pack100: false, pack500: false,
+        firstLegendary: false, allLegendary: false, allEpic: false
+    };
+
+    // ---------- 音效系统 ----------
+    let audioCtx = null;
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    function playSound(type) {
+        if (!audioCtx) initAudio();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+        if (type === 'chest') { osc.frequency.value = 300; osc.type = 'sine'; gain.gain.setValueAtTime(0.15, now); }
+        else if (type === 'legendary') { osc.frequency.value = 880; osc.type = 'triangle'; gain.gain.setValueAtTime(0.25, now); }
+        else { osc.frequency.value = 500; osc.type = 'square'; }
+        osc.start();
+        osc.stop(now + 0.4);
+    }
+
+    // 动画与震动
+    function applyShake() { document.body.classList.add('shake-effect'); setTimeout(()=> document.body.classList.remove('shake-effect'), 300); }
+    function applyFlash(container) { if(container) container.classList.add('flash-effect'); setTimeout(()=> container?.classList.remove('flash-effect'), 600); }
+    function applyChestAnimation() {
+        let area = document.querySelector(".result-area");
+        area.classList.add('chest-animation');
+        setTimeout(()=>area.classList.remove('chest-animation'), 300);
+        playSound('chest');
+    }
+
+    // ---------- 战利品库 (用户原有) ----------
     const DEFAULT_LOOT = [
-        // 普通 (Common) - 16个
         { "name": "泥土", "rarity": "Common", "type": "方块", "desc": "无处不在" },
         { "name": "橡木木板", "rarity": "Common", "type": "方块", "desc": "建筑材料" },
         { "name": "煤炭", "rarity": "Common", "type": "矿物", "desc": "燃烧能源" },
@@ -399,8 +215,6 @@
         { "name": "红石粉", "rarity": "Common", "type": "材料", "desc": "电路元件" },
         { "name": "墨囊", "rarity": "Common", "type": "染料", "desc": "鱿鱼掉落" },
         { "name": "糖", "rarity": "Common", "type": "食物", "desc": "甘蔗合成" },
-        
-        // 稀有 (Rare) - 15个
         { "name": "铁锭", "rarity": "Rare", "type": "矿物", "desc": "常用金属" },
         { "name": "金锭", "rarity": "Rare", "type": "矿物", "desc": "闪耀" },
         { "name": "末影珍珠", "rarity": "Rare", "type": "道具", "desc": "传送" },
@@ -416,8 +230,6 @@
         { "name": "海晶碎片", "rarity": "Rare", "type": "材料", "desc": "海洋遗迹" },
         { "name": "兔子脚", "rarity": "Rare", "type": "材料", "desc": "跳跃药水" },
         { "name": "粘液球", "rarity": "Rare", "type": "材料", "desc": "粘性活塞" },
-        
-        // 史诗 (Epic) - 12个
         { "name": "钻石", "rarity": "Epic", "type": "矿物", "desc": "顶级工具材料" },
         { "name": "绿宝石", "rarity": "Epic", "type": "货币", "desc": "与村民交易" },
         { "name": "下界合金碎片", "rarity": "Epic", "type": "材料", "desc": "锻造远古金属" },
@@ -430,8 +242,6 @@
         { "name": "鹦鹉螺壳", "rarity": "Epic", "type": "材料", "desc": "潮涌核心" },
         { "name": "海洋之心", "rarity": "Epic", "type": "宝物", "desc": "潮涌核心核心" },
         { "name": "下界之星", "rarity": "Epic", "type": "宝物", "desc": "合成信标" },
-        
-        // 传说 (Legendary) - 9个
         { "name": "下界合金锭", "rarity": "Legendary", "type": "矿物", "desc": "最强装备核心" },
         { "name": "附魔金苹果", "rarity": "Legendary", "type": "食物", "desc": "神级增益" },
         { "name": "龙首", "rarity": "Legendary", "type": "战利品", "desc": "末地战利品" },
@@ -442,240 +252,283 @@
         { "name": "下界合金镐", "rarity": "Legendary", "type": "工具", "desc": "最快挖掘" },
         { "name": "龙蛋", "rarity": "Legendary", "type": "装饰", "desc": "末地龙蛋" }
     ];
-    
-    // 概率配置
+
     const PROB = {
-        wood: { Common: 0.60, Rare: 0.25, Epic: 0.12, Legendary: 0.03 },
-        netherite: { Common: 0.50, Rare: 0.26, Epic: 0.18, Legendary: 0.06 }
+        wood: { Common: 0.80, Rare: 0.10, Epic: 0.07, Legendary: 0.03 },
+        netherite: { Common: 0.60, Rare: 0.25, Epic: 0.09, Legendary: 0.06 }
     };
-    
+
     function randomRarity(probMap) {
-        let r = Math.random();
-        let acc = 0;
-        for (let [rarity, p] of Object.entries(probMap)) {
-            acc += p;
-            if (r < acc) return rarity;
-        }
+        let r = Math.random(), acc = 0;
+        for (let [rarity, p] of Object.entries(probMap)) { acc += p; if (r < acc) return rarity; }
         return "Common";
     }
-    
     function getRandomItemByRarity(rarity) {
         const pool = lootTable.filter(item => item.rarity === rarity);
-        if (pool.length === 0) {
-            return { name: `缺失[${rarity}]物品`, rarity: rarity, type: "? ", desc: "请编辑战利品表" };
-        }
-        const idx = Math.floor(Math.random() * pool.length);
-        return { ...pool[idx] };
+        if (!pool.length) return { name: `缺失[${rarity}]物品`, rarity: rarity, type: "? ", desc: "请编辑战利品表" };
+        return { ...pool[Math.floor(Math.random() * pool.length)] };
     }
-    
-    function openChest(packType) {
+
+    // 核心开箱 (支持强制本包必出史诗)
+    function openSinglePack(packType, forceEpicInPack = false) {
+        let costOk = false;
         if (packType === 'wood') {
-            if (woodKey > 0) woodKey--;
-            else if (emeralds >= 100) emeralds -= 100;
-            else { alert("资源不足！需要 100 绿宝石 或 1 把木质钥匙"); return null; }
+            if (woodKey > 0) { woodKey--; costOk = true; }
+            else if (emeralds >= 100) { emeralds -= 100; costOk = true; }
         } else {
-            if (netheriteKey > 0) netheriteKey--;
-            else if (emeralds >= 330) emeralds -= 330;
-            else { alert("资源不足！需要 330 绿宝石 或 1 把下界合金钥匙"); return null; }
+            if (netheriteKey > 0) { netheriteKey--; costOk = true; }
+            else if (emeralds >= 330) { emeralds -= 330; costOk = true; }
         }
-        
-        let eliteCounter = pity[packType].elite;
-        let specialCounter = pity[packType].special;
-        let forceLegendary = (eliteCounter >= 59);
-        let forceEpicOrAbove = (!forceLegendary && specialCounter >= 9);
-        
-        const baseProb = PROB[packType];
-        const itemsRarities = [];
+        if (!costOk) return null;
+
+        let eliteC = pity[packType].elite, specialC = pity[packType].special;
+        let forceLegendary = (eliteC >= 63);  // 64保底
+        let forceSpecial = (!forceLegendary && specialC >= 13); // 14保底
         let forcedIndex = -1;
         if (forceLegendary) forcedIndex = Math.floor(Math.random() * 5);
-        else if (forceEpicOrAbove) forcedIndex = Math.floor(Math.random() * 5);
-        
-        function randomEpicOrAbove() {
-            let epicW = baseProb.Epic;
-            let legW = baseProb.Legendary;
-            let total = epicW + legW;
-            if (total === 0) return "Epic";
-            let r = Math.random() * total;
-            if (r < epicW) return "Epic";
-            return "Legendary";
-        }
-        
+        else if (forceSpecial) forcedIndex = Math.floor(Math.random() * 5);
+
+        const baseProb = PROB[packType];
+        let itemsRarities = [];
         for (let i = 0; i < 5; i++) {
             if (forceLegendary && i === forcedIndex) itemsRarities.push("Legendary");
-            else if (forceEpicOrAbove && i === forcedIndex) itemsRarities.push(randomEpicOrAbove());
-            else itemsRarities.push(randomRarity(baseProb));
+            else if (forceSpecial && i === forcedIndex) {
+                let r = Math.random() * (baseProb.Epic + baseProb.Legendary);
+                itemsRarities.push(r < baseProb.Epic ? "Epic" : "Legendary");
+            } else itemsRarities.push(randomRarity(baseProb));
         }
-        
-        const chestItems = itemsRarities.map(rarity => getRandomItemByRarity(rarity));
-        
-        const hasLegendary = chestItems.some(it => it.rarity === "Legendary");
-        const hasEpicOrAbove = chestItems.some(it => it.rarity === "Epic" || it.rarity === "Legendary");
-        if (hasLegendary) pity[packType].elite = 0;
-        else pity[packType].elite = eliteCounter + 1;
-        if (hasEpicOrAbove) pity[packType].special = 0;
-        else pity[packType].special = specialCounter + 1;
-        
+        // 十连保底强制：如果forceEpicInPack且本包没有任何史诗/传说，则随机替换一个位置为史诗/传说
+        if (forceEpicInPack && !itemsRarities.some(r => r === "Epic" || r === "Legendary")) {
+            let idx = Math.floor(Math.random() * 5);
+            itemsRarities[idx] = Math.random() < 0.6 ? "Epic" : "Legendary";
+        }
+        let items = itemsRarities.map(r => getRandomItemByRarity(r));
+        let hasLegendary = items.some(i => i.rarity === "Legendary");
+        let hasEpicOrAbove = items.some(i => i.rarity === "Epic" || i.rarity === "Legendary");
+        pity[packType].elite = hasLegendary ? 0 : eliteC + 1;
+        pity[packType].special = hasEpicOrAbove ? 0 : specialC + 1;
         stats.totalPacks++;
-        for (let item of chestItems) stats.itemsByRarity[item.rarity] = (stats.itemsByRarity[item.rarity] || 0) + 1;
-        
-        const itemNames = chestItems.map(it=>it.name).join('、');
-        const short = itemNames.length > 45 ? itemNames.slice(0,42)+'…' : itemNames;
-        const packLabel = packType === 'wood' ? '木质宝箱' : '合金宝箱';
-        history.unshift({ text: `${packLabel} | ${short}`, items: chestItems.slice() });
-        if (history.length > 20) history.pop();
-        
-        updateUIResources();
-        updatePityDisplay();
-        updateStatsDisplay();
-        updateHistoryDisplay();
-        return chestItems;
-    }
-    
-    function displayChestResult(items) {
-        const container = document.getElementById("packResultContainer");
-        if (!items || items.length === 0) {
-            container.innerHTML = '<div style="color:#b49b6e;">点击宝箱开启战利品</div>';
-            return;
+        for (let it of items) stats.itemsByRarity[it.rarity] = (stats.itemsByRarity[it.rarity] || 0) + 1;
+        // 图鉴更新
+        for (let it of items) {
+            if (!collection[it.name]) collection[it.name] = { count: 0, rarity: it.rarity, type: it.type, desc: it.desc };
+            collection[it.name].count++;
         }
-        container.innerHTML = "";
-        items.forEach(item => {
-            const div = document.createElement("div");
-            let rarityClass = "";
-            if (item.rarity === "Common") rarityClass = "Common";
-            else if (item.rarity === "Rare") rarityClass = "Rare";
-            else if (item.rarity === "Epic") rarityClass = "Epic";
-            else if (item.rarity === "Legendary") rarityClass = "Legendary";
-            div.className = `card-item rarity-${rarityClass}`;
-            const rarityZh = {Common:"普通", Rare:"稀有", Epic:"史诗", Legendary:"传说"}[item.rarity];
-            div.innerHTML = `
-                <div class="card-name">${escapeHtml(item.name)}</div>
-                <div class="card-detail">
-                    <span>${rarityZh}</span>
-                    <span>${item.type || '物品'}</span>
-                    <span>${item.desc ? escapeHtml(item.desc) : ''}</span>
-                </div>
-            `;
-            container.appendChild(div);
-        });
+        return { items, hasLegendary, hasEpicOrAbove };
     }
-    
-    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
-    
-    function updateUIResources() {
+
+    // 十连开箱 (保证至少一个史诗/传说)
+    async function openTenPack(packType) {
+        let results = [];
+        let anyEpicOrLegendary = false;
+        let firstPackAnim = true;
+        for (let i = 0; i < 10; i++) {
+            let forceEpic = (i === 9 && !anyEpicOrLegendary);
+            let res = openSinglePack(packType, forceEpic);
+            if (!res) return null;
+            if (res.hasEpicOrAbove) anyEpicOrLegendary = true;
+            results.push(...res.items);
+            if (firstPackAnim) { firstPackAnim = false; applyChestAnimation(); }
+        }
+        // 统计本次十连
+        let rarityCount = { Common: 0, Rare: 0, Epic: 0, Legendary: 0 };
+        results.forEach(it => rarityCount[it.rarity]++);
+        let statsHtml = `十连统计: 普通 ${rarityCount.Common} | 稀有 ${rarityCount.Rare} | 史诗 ${rarityCount.Epic} | 传说 ${rarityCount.Legendary}`;
+        document.getElementById("tenStats").innerHTML = statsHtml;
+        document.getElementById("tenStats").style.display = "block";
+        return results;
+    }
+
+    // 展示结果
+    function displayResults(items, isTen = false) {
+        let container = document.getElementById("packResultContainer");
+        container.innerHTML = "";
+        if (!items || items.length === 0) { container.innerHTML = '<div style="color:#b49b6e;">点击宝箱开启战利品</div>'; return; }
+        items.forEach(item => {
+            let div = document.createElement("div");
+            let cls = { Common: "Common", Rare: "Rare", Epic: "Epic", Legendary: "Legendary" }[item.rarity];
+            div.className = `card-item rarity-${cls}`;
+            let zh = { Common: "普通", Rare: "稀有", Epic: "史诗", Legendary: "传说" }[item.rarity];
+            div.innerHTML = `<div class="card-name">${escapeHtml(item.name)}</div><div class="card-detail"><span>${zh}</span><span>${item.type || '物品'}</span><span>${item.desc || ''}</span></div>`;
+            container.appendChild(div);
+            if (item.rarity === "Legendary") { applyFlash(div); playSound('legendary'); }
+            else if (item.rarity === "Epic") applyFlash(div);
+        });
+        if (!isTen) document.getElementById("tenStats").style.display = "none";
+        applyShake();
+    }
+
+    // 成就检查与解锁
+    function checkAchievements() {
+        let totalPacks = stats.totalPacks;
+        if (totalPacks >= 10 && !achievements.pack10) { achievements.pack10 = true; alert("🏅 成就解锁: 开箱10次！"); }
+        if (totalPacks >= 50 && !achievements.pack50) { achievements.pack50 = true; alert("🏅 成就解锁: 开箱50次！"); }
+        if (totalPacks >= 100 && !achievements.pack100) { achievements.pack100 = true; alert("🏅 成就解锁: 开箱100次！"); }
+        if (totalPacks >= 500 && !achievements.pack500) { achievements.pack500 = true; alert("🏅 成就解锁: 开箱500次！"); }
+        if (stats.itemsByRarity.Legendary > 0 && !achievements.firstLegendary) { achievements.firstLegendary = true; alert("🏆 成就解锁: 首次获得传说物品！"); }
+        // 全传说/全史诗检查
+        let allLegendaryItems = lootTable.filter(i => i.rarity === "Legendary").map(i => i.name);
+        let allEpicItems = lootTable.filter(i => i.rarity === "Epic").map(i => i.name);
+        let ownedLegendary = allLegendaryItems.every(name => collection[name]?.count > 0);
+        let ownedEpic = allEpicItems.every(name => collection[name]?.count > 0);
+        if (ownedLegendary && !achievements.allLegendary) { achievements.allLegendary = true; alert("🎉 传奇成就: 集齐所有传说物品！"); }
+        if (ownedEpic && !achievements.allEpic) { achievements.allEpic = true; alert("✨ 史诗成就: 集齐所有史诗物品！"); }
+        saveGame();
+        renderAchievements();
+        renderCollection();
+    }
+
+    function renderAchievements() {
+        let list = document.getElementById("achievementList");
+        let achMap = [
+            { key: "pack10", name: "开箱10次" }, { key: "pack50", name: "开箱50次" }, { key: "pack100", name: "开箱100次" }, { key: "pack500", name: "开箱500次" },
+            { key: "firstLegendary", name: "首次传说" }, { key: "allEpic", name: "全史诗收藏" }, { key: "allLegendary", name: "全传说收藏" }
+        ];
+        list.innerHTML = achMap.map(a => `<div class="achievement ${achievements[a.key] ? 'unlocked' : 'locked'}">${achievements[a.key] ? '✅' : '🔒'} ${a.name}</div>`).join('');
+    }
+
+    function renderCollection() {
+        let grid = document.getElementById("collectionGrid");
+        if (!lootTable.length) return;
+        let all = [...lootTable];
+        let html = '';
+        all.forEach(item => {
+            let owned = collection[item.name]?.count > 0;
+            let count = collection[item.name]?.count || 0;
+            html += `<div class="collection-item ${owned ? 'owned' : 'missing'}"><span>${escapeHtml(item.name)}</span><span class="badge">${count}</span></div>`;
+        });
+        grid.innerHTML = html;
+    }
+
+    // 每日免费
+    function claimDaily() {
+        let last = localStorage.getItem("dailyFreeDate");
+        let today = new Date().toDateString();
+        if (last === today) { alert("今日免费宝箱已领取！明日再来吧~"); return false; }
+        localStorage.setItem("dailyFreeDate", today);
+        let res = openSinglePack("wood", false);
+        if (res) {
+            displayResults(res.items);
+            playSound('chest');
+            alert("每日免费宝箱已开启！");
+            updateUI();
+            return true;
+        }
+        return false;
+    }
+
+    // 保存/加载
+    function saveGame() {
+        let data = { emeralds, woodKey, netheriteKey, pity, stats, history, collection, achievements };
+        localStorage.setItem("mcChestSim", JSON.stringify(data));
+    }
+    function loadGame() {
+        let raw = localStorage.getItem("mcChestSim");
+        if (raw) {
+            try {
+                let d = JSON.parse(raw);
+                emeralds = d.emeralds; woodKey = d.woodKey; netheriteKey = d.netheriteKey;
+                pity = d.pity; stats = d.stats; history = d.history || []; collection = d.collection || {};
+                achievements = { ...achievements, ...(d.achievements || {}) };
+            } catch (e) { }
+        }
+        updateUI();
+        renderAchievements(); renderCollection();
+    }
+    function resetGame() {
+        if (confirm("重置所有进度？")) {
+            localStorage.removeItem("mcChestSim");
+            location.reload();
+        }
+    }
+
+    function updateUI() {
         document.getElementById("emeraldAmount").innerText = emeralds;
         document.getElementById("woodKey").innerText = woodKey;
         document.getElementById("netheriteKey").innerText = netheriteKey;
-    }
-    
-    function updatePityDisplay() {
         document.getElementById("woodElitePity").innerText = pity.wood.elite;
         document.getElementById("woodSpecialPity").innerText = pity.wood.special;
         document.getElementById("netheriteElitePity").innerText = pity.netherite.elite;
         document.getElementById("netheriteSpecialPity").innerText = pity.netherite.special;
-    }
-    
-    function updateStatsDisplay() {
         document.getElementById("totalPacks").innerText = stats.totalPacks;
         document.getElementById("statCommon").innerText = stats.itemsByRarity.Common || 0;
         document.getElementById("statRare").innerText = stats.itemsByRarity.Rare || 0;
         document.getElementById("statEpic").innerText = stats.itemsByRarity.Epic || 0;
         document.getElementById("statLegendary").innerText = stats.itemsByRarity.Legendary || 0;
-        let total = Object.values(stats.itemsByRarity).reduce((a,b)=>a+b,0);
+        let total = Object.values(stats.itemsByRarity).reduce((a, b) => a + b, 0);
         document.getElementById("totalCards").innerText = total;
-        let legCount = stats.itemsByRarity.Legendary || 0;
-        let rate = total === 0 ? 0 : (legCount / total * 100);
-        document.getElementById("legendaryRate").innerText = rate.toFixed(2) + "%";
+        let legRate = total === 0 ? 0 : (stats.itemsByRarity.Legendary || 0) / total * 100;
+        document.getElementById("legendaryRate").innerText = legRate.toFixed(2) + "%";
+        updateHistoryDisplay();
+        saveGame();
     }
-    
+
     function updateHistoryDisplay() {
         const historyDiv = document.getElementById("historyList");
-        if (history.length === 0) {
-            historyDiv.innerHTML = '<div style="color:#b49b6e;">暂无抽奖记录</div>';
-            return;
-        }
-        historyDiv.innerHTML = history.slice(0,15).map((h, idx) => {
-            return `<div class="history-entry">${idx+1}. ${escapeHtml(h.text)}</div>`;
-        }).join('');
+        if (history.length === 0) { historyDiv.innerHTML = '<div style="color:#b49b6e;">暂无抽奖记录</div>'; return; }
+        historyDiv.innerHTML = history.slice(0, 15).map((h, idx) => `<div class="history-entry">${idx + 1}. ${escapeHtml(h.text)}</div>`).join('');
     }
-    
-    function resetResources() {
-        emeralds = 2000;
-        woodKey = 5;
-        netheriteKey = 2;
-        updateUIResources();
-    }
-    
-    function resetPity() {
-        pity.wood = { elite: 0, special: 0 };
-        pity.netherite = { elite: 0, special: 0 };
-        updatePityDisplay();
-    }
-    
-    function resetStats() {
-        stats = { totalPacks: 0, itemsByRarity: { Common:0, Rare:0, Epic:0, Legendary:0 } };
-        updateStatsDisplay();
-    }
-    
-    function clearHistory() {
-        history = [];
-        updateHistoryDisplay();
-    }
-    
+
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function (m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+    function resetResources() { emeralds = 1500; woodKey = 3; netheriteKey = 1; updateUI(); }
+    function resetPity() { pity.wood = { elite: 0, special: 0 }; pity.netherite = { elite: 0, special: 0 }; updateUI(); }
+    function resetStats() { stats = { totalPacks: 0, itemsByRarity: { Common: 0, Rare: 0, Epic: 0, Legendary: 0 } }; updateUI(); }
+    function clearHistory() { history = []; updateUI(); }
     function loadLootTable(jsonStr) {
         try {
             let parsed = JSON.parse(jsonStr);
             if (!Array.isArray(parsed)) throw new Error("战利品表必须为数组");
             for (let item of parsed) {
                 if (!item.name || !item.rarity) throw new Error(`缺少name或rarity: ${JSON.stringify(item)}`);
-                if (!["Common","Rare","Epic","Legendary"].includes(item.rarity)) {
-                    throw new Error(`稀有度错误: ${item.rarity} 必须是 Common/Rare/Epic/Legendary`);
-                }
+                if (!["Common", "Rare", "Epic", "Legendary"].includes(item.rarity)) throw new Error(`稀有度错误: ${item.rarity}`);
             }
             lootTable = parsed;
             alert(`成功加载 ${lootTable.length} 件战利品！`);
-            const rarities = new Set(lootTable.map(i=>i.rarity));
-            if (!rarities.has("Common")) console.warn("缺少普通(Common)物品");
-            if (!rarities.has("Rare")) console.warn("缺少稀有(Rare)物品");
-            if (!rarities.has("Epic")) console.warn("缺少史诗(Epic)物品");
-            if (!rarities.has("Legendary")) console.warn("缺少传说(Legendary)物品");
-        } catch(e) {
-            alert("JSON解析失败: " + e.message);
+        } catch (e) { alert("JSON解析失败: " + e.message); }
+    }
+    function initDefault() { lootTable = JSON.parse(JSON.stringify(DEFAULT_LOOT)); document.getElementById("cardsJsonEditor").value = JSON.stringify(DEFAULT_LOOT, null, 2); }
+
+    async function handleOpen(packType, multi) {
+        if (multi === 10) {
+            let items = await openTenPack(packType);
+            if (items) { displayResults(items, true); checkAchievements(); updateUI(); }
+            else alert("资源不足！");
+        } else {
+            let res = openSinglePack(packType, false);
+            if (res) { displayResults(res.items); checkAchievements(); updateUI(); playSound('chest'); }
+            else alert("资源不足！");
         }
     }
-    
-    function initDefault() {
-        lootTable = JSON.parse(JSON.stringify(DEFAULT_LOOT));
-        document.getElementById("cardsJsonEditor").value = JSON.stringify(DEFAULT_LOOT, null, 2);
-    }
-    
+
     function bindEvents() {
         document.querySelectorAll(".btn-open").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const pack = btn.getAttribute("data-pack");
-                const items = openChest(pack);
-                if (items) displayChestResult(items);
-                else displayChestResult(null);
+            btn.addEventListener("click", () => {
+                let pack = btn.getAttribute("data-pack");
+                let multi = parseInt(btn.getAttribute("data-multi"));
+                handleOpen(pack, multi);
             });
         });
-        document.getElementById("resetResourcesBtn").addEventListener("click", resetResources);
-        document.getElementById("resetPityBtn").addEventListener("click", resetPity);
-        document.getElementById("resetStatsBtn").addEventListener("click", resetStats);
-        document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
-        document.getElementById("loadCardsBtn").addEventListener("click", () => {
-            const json = document.getElementById("cardsJsonEditor").value;
+        document.getElementById("resetResourcesBtn").onclick = resetResources;
+        document.getElementById("resetPityBtn").onclick = resetPity;
+        document.getElementById("resetStatsBtn").onclick = resetStats;
+        document.getElementById("clearHistoryBtn").onclick = clearHistory;
+        document.getElementById("loadCardsBtn").onclick = () => {
+            let json = document.getElementById("cardsJsonEditor").value;
             if (json.trim() === "") alert("请输入JSON战利品数据");
             else loadLootTable(json);
-        });
+        };
+        document.getElementById("dailyFreeBtn").onclick = claimDaily;
+        document.getElementById("resetAchievementsBtn").onclick = () => { achievements = { pack10: false, pack50: false, pack100: false, pack500: false, firstLegendary: false, allLegendary: false, allEpic: false }; saveGame(); renderAchievements(); alert("成就已重置"); };
+        document.getElementById("resetCollectionBtn").onclick = () => { collection = {}; saveGame(); renderCollection(); alert("图鉴已重置"); };
     }
-    
+
     function init() {
         initDefault();
+        loadGame();
         bindEvents();
-        updateUIResources();
-        updatePityDisplay();
-        updateStatsDisplay();
-        updateHistoryDisplay();
-        displayChestResult(null);
+        updateUI();
+        displayResults(null);
     }
     init();
 </script>
