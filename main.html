@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>我的世界 · 宝箱抽奖模拟器 | 豪华战利品库</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        /* Minecraft 像素风基调 */
+        body {
+            background: #3b2a1f url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" fill="#5c3e2a"/><rect x="2" y="2" width="28" height="28" fill="#7c5e3a"/><rect x="8" y="8" width="16" height="16" fill="#9c7e4a"/></svg>');
+            font-family: 'Courier New', 'Minecraft', monospace;
+            margin: 0;
+            padding: 24px 16px;
+            color: #f0f0e0;
+            image-rendering: crisp-edges;
+        }
+
+        .simulator-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #2c2418e6;
+            backdrop-filter: blur(2px);
+            border-radius: 0;
+            border: 4px solid #5e4b32;
+            box-shadow: 0 0 0 2px #1e150c, inset 0 0 0 2px #b89a6e;
+            padding: 1.5rem;
+        }
+
+        h1 {
+            font-family: 'Courier New', monospace;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 0 0.25rem 0;
+            background: #2d2218;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border: 2px solid #b47c44;
+            color: #ffd966;
+            text-shadow: 2px 2px 0 #4a2a10;
+            letter-spacing: 1px;
+        }
+
+        .sub {
+            color: #cfb284;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #d9a13b;
+            padding-left: 12px;
+            background: #1f1912aa;
+            display: inline-block;
+        }
+
+        .resources-panel {
+            background: #1f1a12;
+            border-radius: 0;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border: 2px solid #8b6946;
+            box-shadow: inset 0 1px 0 #5c432a, 0 3px 0 #0a0602;
+        }
+
+        .resource-stats {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            background: #0f0c08;
+            padding: 6px 16px;
+            border: 1px solid #b47c44;
+            font-weight: bold;
+        }
+
+        .resource-label {
+            font-size: 0.85rem;
+            color: #e6c394;
+        }
+
+        .resource-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #f5d742;
+            line-height: 1;
+        }
+
+        .btn-reset {
+            background: #5c3e2a;
+            border: none;
+            color: #f0dba0;
+            padding: 6px 18px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: monospace;
+            border: 2px solid #c28a4b;
+            box-shadow: 0 2px 0 #2f1e0e;
+            transition: 0.05s linear;
+        }
+        .btn-reset:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .packs-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .pack-card {
+            flex: 1;
+            min-width: 260px;
+            background: #2c221ad9;
+            border-radius: 0;
+            padding: 1.2rem 1.5rem 1.8rem;
+            border: 3px solid #84613c;
+            border-top: 6px solid #e7a24e;
+            box-shadow: inset 0 0 0 1px #c99a5e, 0 5px 0 #0e0903;
+        }
+
+        .pack-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-family: monospace;
+        }
+        .pack-price {
+            font-size: 1rem;
+            background: #1a130b;
+            padding: 4px 12px;
+            border: 1px solid #b47c44;
+        }
+        .pity-info {
+            background: #1f1912;
+            border-left: 3px solid #f5b642;
+            padding: 8px 12px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        .btn-open {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: #5f7543;
+            border: none;
+            color: #f9eec1;
+            cursor: pointer;
+            font-family: monospace;
+            border-bottom: 4px solid #2c3a1a;
+            transition: 0.05s linear;
+        }
+        .btn-open:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .result-area {
+            background: #1f1912;
+            border: 3px solid #8b6946;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            background: #5c3e2a;
+            display: inline-block;
+            padding: 0 12px;
+            border: 1px solid #dba247;
+        }
+        .cards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+        .card-item {
+            background: #2c251e;
+            border-radius: 0;
+            padding: 8px 12px;
+            min-width: 160px;
+            flex: 1 0 auto;
+            max-width: 200px;
+            border-left: 8px solid;
+            border-bottom: 2px solid #5a3e24;
+        }
+        .rarity-Common { border-left-color: #8b8b8b; background: #2b2a24; }
+        .rarity-Rare { border-left-color: #4c6eff; background: #1f2b36; }
+        .rarity-Epic { border-left-color: #aa4cf5; background: #2e1e3a; }
+        .rarity-Legendary { border-left-color: #f5bc42; background: #3e2e18; box-shadow: 0 0 4px #ffcd6e; }
+        .card-name {
+            font-weight: bold;
+            font-size: 1rem;
+            font-family: monospace;
+        }
+        .card-detail {
+            font-size: 0.7rem;
+            color: #cdc6b0;
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .info-split {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .history-box, .stats-box {
+            background: #1f1912e6;
+            border: 2px solid #8b6946;
+            padding: 1rem;
+            flex: 1;
+        }
+        .history-list {
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+        .history-entry {
+            padding: 6px 4px;
+            border-bottom: 1px solid #5e4b32;
+            font-family: monospace;
+        }
+        .stat-number {
+            color: #f5d742;
+            font-weight: bold;
+        }
+        button.small {
+            background: #4a3a28;
+            border: none;
+            color: #f0e0aa;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-family: monospace;
+            border: 1px solid #b47c44;
+        }
+        .editor-area {
+            margin-top: 2rem;
+            background: #1e1710e6;
+            border: 2px solid #7a5a3a;
+            padding: 1rem;
+        }
+        textarea {
+            width: 100%;
+            background: #14100c;
+            color: #e5e0b0;
+            border: 2px solid #b47c44;
+            font-family: monospace;
+            font-size: 12px;
+            height: 220px;
+            resize: vertical;
+        }
+        .btn-load {
+            background: #6c542c;
+            border: none;
+            padding: 6px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .warning {
+            font-size: 0.7rem;
+            color: #e8b45a;
+        }
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            border-top: 1px solid #5e4b32;
+            padding-top: 10px;
+        }
+        ::-webkit-scrollbar { width: 8px; background: #2a241c; }
+        ::-webkit-scrollbar-thumb { background: #b87c44; }
+    </style>
+</head>
+<body>
+<div class="simulator-container">
+    <h1>⛏️ 我的世界 · 宝箱抽奖模拟器</h1>
+    <div class="sub">木质宝箱 · 下界合金宝箱 | 传说保底机制 | 50+ 豪华战利品库</div>
+
+    <div class="resources-panel">
+        <div class="resource-stats">
+            <div class="resource-item">💎 <span class="resource-label">绿宝石</span> <span class="resource-value" id="emeraldAmount">2000</span></div>
+            <div class="resource-item">🔑 <span class="resource-label">木质钥匙</span> <span class="resource-value" id="woodKey">5</span></div>
+            <div class="resource-item">⚜️ <span class="resource-label">合金钥匙</span> <span class="resource-value" id="netheriteKey">2</span></div>
+        </div>
+        <button class="btn-reset" id="resetResourcesBtn">⟳ 重置资源</button>
+    </div>
+
+    <div class="packs-row">
+        <div class="pack-card">
+            <div class="pack-title">🪵 木质宝箱 <span class="pack-price">100绿宝石 / 1木钥匙</span></div>
+            <div class="pity-info"><span>🏆 传说保底</span><span id="woodElitePity">0</span> / 60</div>
+            <div class="pity-info"><span>✨ 史诗+保底</span><span id="woodSpecialPity">0</span> / 10</div>
+            <button class="btn-open" data-pack="wood">🔓 开启宝箱</button>
+        </div>
+        <div class="pack-card">
+            <div class="pack-title">🔥 下界合金宝箱 <span class="pack-price">330绿宝石 / 1合金钥匙</span></div>
+            <div class="pity-info"><span>🏆 传说保底</span><span id="netheriteElitePity">0</span> / 60</div>
+            <div class="pity-info"><span>✨ 史诗+保底</span><span id="netheriteSpecialPity">0</span> / 10</div>
+            <button class="btn-open" data-pack="netherite">⚡ 开启宝箱</button>
+        </div>
+    </div>
+
+    <div class="result-area" id="resultArea">
+        <div class="result-title">📦 本次掉落物</div>
+        <div id="packResultContainer" class="cards-grid">
+            <div style="color:#b49b6e; text-align:center; width:100%;">点击宝箱开始摸奖</div>
+        </div>
+    </div>
+
+    <div class="info-split">
+        <div class="history-box">
+            <div>📜 最近记录 <button class="small" id="clearHistoryBtn">清空</button></div>
+            <div id="historyList" class="history-list">
+                <div style="color:#b49b6e;">暂无抽奖记录</div>
+            </div>
+        </div>
+        <div class="stats-box">
+            <div>📊 全局统计 <button class="small" id="resetStatsBtn">重置统计</button></div>
+            <div style="font-size:0.85rem; margin-top:6px;">
+                <div>总宝箱: <span id="totalPacks" class="stat-number">0</span></div>
+                <div>📦 普通: <span id="statCommon" class="stat-number">0</span> &nbsp; 🔵 稀有: <span id="statRare" class="stat-number">0</span></div>
+                <div>🟣 史诗: <span id="statEpic" class="stat-number">0</span> &nbsp; 🟡 传说: <span id="statLegendary" class="stat-number">0</span></div>
+                <div>💎 总物品: <span id="totalCards" class="stat-number">0</span></div>
+                <div>🏆 传说率: <span id="legendaryRate" class="stat-number">0.00%</span></div>
+            </div>
+            <button class="small" id="resetPityBtn" style="margin-top:10px;">🔄 重置保底计数</button>
+        </div>
+    </div>
+
+    <div class="editor-area">
+        <div class="editor-header" style="display: flex; justify-content: space-between;">
+            <span>📝 战利品表编辑器 (JSON格式) — 自由修改，已内置50+物品</span>
+            <button class="btn-load" id="loadCardsBtn">加载战利品表</button>
+        </div>
+        <textarea id="cardsJsonEditor"></textarea>
+        <div class="warning">⚠️ 稀有度必须为 "Common", "Rare", "Epic", "Legendary" 。每种稀有度至少一件物品，否则抽卡可能出错。下方已预置大量 Minecraft 经典物品/生物。</div>
+    </div>
+    <footer>⚡ 每箱掉落5件物品 · 传说保底: 59箱未出传说 → 第60箱必出传说 · 史诗保底: 9箱未出史诗/传说 → 第10箱必出史诗或传说 · 合金宝箱传说概率更高！</footer>
+</div>
+
+<script>
+    // ---------- 全局资源 ----------
+    let emeralds = 2000;
+    let woodKey = 5;
+    let netheriteKey = 2;
+    
+    let pity = {
+        wood: { elite: 0, special: 0 },
+        netherite: { elite: 0, special: 0 }
+    };
+    
+    let stats = {
+        totalPacks: 0,
+        itemsByRarity: { Common:0, Rare:0, Epic:0, Legendary:0 }
+    };
+    
+    let history = [];
+    let lootTable = [];
+    
+    // ---------- 超豪华战利品库 (50+ 物品) ----------
+    const DEFAULT_LOOT = [
+        // 普通 (Common) - 16个
+        { "name": "泥土", "rarity": "Common", "type": "方块", "desc": "无处不在" },
+        { "name": "橡木木板", "rarity": "Common", "type": "方块", "desc": "建筑材料" },
+        { "name": "煤炭", "rarity": "Common", "type": "矿物", "desc": "燃烧能源" },
+        { "name": "生鸡肉", "rarity": "Common", "type": "食物", "desc": "可烤熟" },
+        { "name": "石头", "rarity": "Common", "type": "方块", "desc": "最基础的建材" },
+        { "name": "沙子", "rarity": "Common", "type": "方块", "desc": "烧制玻璃" },
+        { "name": "木棍", "rarity": "Common", "type": "材料", "desc": "合成工具" },
+        { "name": "羽毛", "rarity": "Common", "type": "材料", "desc": "来自鸡" },
+        { "name": "火药", "rarity": "Common", "type": "材料", "desc": "苦力怕掉落" },
+        { "name": "骨头", "rarity": "Common", "type": "材料", "desc": "驯服狼" },
+        { "name": "线", "rarity": "Common", "type": "材料", "desc": "蜘蛛掉落" },
+        { "name": "蜘蛛眼", "rarity": "Common", "type": "材料", "desc": "有毒" },
+        { "name": "玻璃瓶", "rarity": "Common", "type": "容器", "desc": "装药水" },
+        { "name": "红石粉", "rarity": "Common", "type": "材料", "desc": "电路元件" },
+        { "name": "墨囊", "rarity": "Common", "type": "染料", "desc": "鱿鱼掉落" },
+        { "name": "糖", "rarity": "Common", "type": "食物", "desc": "甘蔗合成" },
+        
+        // 稀有 (Rare) - 15个
+        { "name": "铁锭", "rarity": "Rare", "type": "矿物", "desc": "常用金属" },
+        { "name": "金锭", "rarity": "Rare", "type": "矿物", "desc": "闪耀" },
+        { "name": "末影珍珠", "rarity": "Rare", "type": "道具", "desc": "传送" },
+        { "name": "附魔书", "rarity": "Rare", "type": "附魔", "desc": "随机魔咒" },
+        { "name": "烈焰棒", "rarity": "Rare", "type": "材料", "desc": "酿造" },
+        { "name": "青金石", "rarity": "Rare", "type": "矿物", "desc": "附魔材料" },
+        { "name": "末影之眼", "rarity": "Rare", "type": "道具", "desc": "定位要塞" },
+        { "name": "烈焰粉", "rarity": "Rare", "type": "材料", "desc": "酿造燃料" },
+        { "name": "岩浆膏", "rarity": "Rare", "type": "材料", "desc": "抗火药水" },
+        { "name": "萤石粉", "rarity": "Rare", "type": "材料", "desc": "增强药水" },
+        { "name": "金粒", "rarity": "Rare", "type": "矿物", "desc": "合成金胡萝卜" },
+        { "name": "铁粒", "rarity": "Rare", "type": "矿物", "desc": "熔炼铁锭" },
+        { "name": "海晶碎片", "rarity": "Rare", "type": "材料", "desc": "海洋遗迹" },
+        { "name": "兔子脚", "rarity": "Rare", "type": "材料", "desc": "跳跃药水" },
+        { "name": "粘液球", "rarity": "Rare", "type": "材料", "desc": "粘性活塞" },
+        
+        // 史诗 (Epic) - 12个
+        { "name": "钻石", "rarity": "Epic", "type": "矿物", "desc": "顶级工具材料" },
+        { "name": "绿宝石", "rarity": "Epic", "type": "货币", "desc": "与村民交易" },
+        { "name": "下界合金碎片", "rarity": "Epic", "type": "材料", "desc": "锻造远古金属" },
+        { "name": "不死图腾", "rarity": "Epic", "type": "神器", "desc": "免死一次" },
+        { "name": "恶魂之泪", "rarity": "Epic", "type": "材料", "desc": "酿造再生药水" },
+        { "name": "远古残骸", "rarity": "Epic", "type": "矿物", "desc": "下界合金原料" },
+        { "name": "龙息", "rarity": "Epic", "type": "材料", "desc": "滞留药水" },
+        { "name": "潜影壳", "rarity": "Epic", "type": "材料", "desc": "潜影盒" },
+        { "name": "幻翼膜", "rarity": "Epic", "type": "材料", "desc": "缓降药水" },
+        { "name": "鹦鹉螺壳", "rarity": "Epic", "type": "材料", "desc": "潮涌核心" },
+        { "name": "海洋之心", "rarity": "Epic", "type": "宝物", "desc": "潮涌核心核心" },
+        { "name": "下界之星", "rarity": "Epic", "type": "宝物", "desc": "合成信标" },
+        
+        // 传说 (Legendary) - 9个
+        { "name": "下界合金锭", "rarity": "Legendary", "type": "矿物", "desc": "最强装备核心" },
+        { "name": "附魔金苹果", "rarity": "Legendary", "type": "食物", "desc": "神级增益" },
+        { "name": "龙首", "rarity": "Legendary", "type": "战利品", "desc": "末地战利品" },
+        { "name": "鞘翅", "rarity": "Legendary", "type": "装备", "desc": "翱翔天空" },
+        { "name": "凋灵骷髅头颅", "rarity": "Legendary", "type": "稀有头颅", "desc": "召唤凋灵" },
+        { "name": "三叉戟", "rarity": "Legendary", "type": "武器", "desc": "引雷附魔" },
+        { "name": "下界合金剑", "rarity": "Legendary", "type": "武器", "desc": "最强剑" },
+        { "name": "下界合金镐", "rarity": "Legendary", "type": "工具", "desc": "最快挖掘" },
+        { "name": "龙蛋", "rarity": "Legendary", "type": "装饰", "desc": "末地龙蛋" }
+    ];
+    
+    // 概率配置
+    const PROB = {
+        wood: { Common: 0.60, Rare: 0.25, Epic: 0.12, Legendary: 0.03 },
+        netherite: { Common: 0.50, Rare: 0.26, Epic: 0.18, Legendary: 0.06 }
+    };
+    
+    function randomRarity(probMap) {
+        let r = Math.random();
+        let acc = 0;
+        for (let [rarity, p] of Object.entries(probMap)) {
+            acc += p;
+            if (r < acc) return rarity;
+        }
+        return "Common";
+    }
+    
+    function getRandomItemByRarity(rarity) {
+        const pool = lootTable.filter(item => item.rarity === rarity);
+        if (pool.length === 0) {
+            return { name: `缺失[${rarity}]物品`, rarity: rarity, type: "? ", desc: "请编辑战利品表" };
+        }
+        const idx = Math.floor(Math.random() * pool.length);
+        return { ...pool[idx] };
+    }
+    
+    function openChest(packType) {
+        if (packType === 'wood') {
+            if (woodKey > 0) woodKey--;
+            else if (emeralds >= 100) emeralds -= 100;
+            else { alert("资源不足！需要 100 绿宝石 或 1 把木质钥匙"); return null; }
+        } else {
+            if (netheriteKey > 0) netheriteKey--;
+            else if (emeralds >= 330) emeralds -= 330;
+            else { alert("资源不足！需要 330 绿宝石 或 1 把下界合金钥匙"); return null; }
+        }
+        
+        let eliteCounter = pity[packType].elite;
+        let specialCounter = pity[packType].special;
+        let forceLegendary = (eliteCounter >= 59);
+        let forceEpicOrAbove = (!forceLegendary && specialCounter >= 9);
+        
+        const baseProb = PROB[packType];
+        const itemsRarities = [];
+        let forcedIndex = -1;
+        if (forceLegendary) forcedIndex = Math.floor(Math.random() * 5);
+        else if (forceEpicOrAbove) forcedIndex = Math.floor(Math.random() * 5);
+        
+        function randomEpicOrAbove() {
+            let epicW = baseProb.Epic;
+            let legW = baseProb.Legendary;
+            let total = epicW + legW;
+            if (total === 0) return "Epic";
+            let r = Math.random() * total;
+            if (r < epicW) return "Epic";
+            return "Legendary";
+        }
+        
+        for (let i = 0; i < 5; i++) {
+            if (forceLegendary && i === forcedIndex) itemsRarities.push("Legendary");
+            else if (forceEpicOrAbove && i === forcedIndex) itemsRarities.push(randomEpicOrAbove());
+            else itemsRarities.push(randomRarity(baseProb));
+        }
+        
+        const chestItems = itemsRarities.map(rarity => getRandomItemByRarity(rarity));
+        
+        const hasLegendary = chestItems.some(it => it.rarity === "Legendary");
+        const hasEpicOrAbove = chestItems.some(it => it.rarity === "Epic" || it.rarity === "Legendary");
+        if (hasLegendary) pity[packType].elite = 0;
+        else pity[packType].elite = eliteCounter + 1;
+        if (hasEpicOrAbove) pity[packType].special = 0;
+        else pity[packType].special = specialCounter + 1;
+        
+        stats.totalPacks++;
+        for (let item of chestItems) stats.itemsByRarity[item.rarity] = (stats.itemsByRarity[item.rarity] || 0) + 1;
+        
+        const itemNames = chestItems.map(it=>it.name).join('、');
+        const short = itemNames.length > 45 ? itemNames.slice(0,42)+'…' : itemNames;
+        const packLabel = packType === 'wood' ? '木质宝箱' : '合金宝箱';
+        history.unshift({ text: `${packLabel} | ${short}`, items: chestItems.slice() });
+        if (history.length > 20) history.pop();
+        
+        updateUIResources();
+        updatePityDisplay();
+        updateStatsDisplay();
+        updateHistoryDisplay();
+        return chestItems;
+    }
+    
+    function displayChestResult(items) {
+        const container = document.getElementById("packResultContainer");
+        if (!items || items.length === 0) {
+            container.innerHTML = '<div style="color:#b49b6e;">点击宝箱开启战利品</div>';
+            return;
+        }
+        container.innerHTML = "";
+        items.forEach(item => {
+            const div = document.createElement("div");
+            let rarityClass = "";
+            if (item.rarity === "Common") rarityClass = "Common";
+            else if (item.rarity === "Rare") rarityClass = "Rare";
+            else if (item.rarity === "Epic") rarityClass = "Epic";
+            else if (item.rarity === "Legendary") rarityClass = "Legendary";
+            div.className = `card-item rarity-${rarityClass}`;
+            const rarityZh = {Common:"普通", Rare:"稀有", Epic:"史诗", Legendary:"传说"}[item.rarity];
+            div.innerHTML = `
+                <div class="card-name">${escapeHtml(item.name)}</div>
+                <div class="card-detail">
+                    <span>${rarityZh}</span>
+                    <span>${item.type || '物品'}</span>
+                    <span>${item.desc ? escapeHtml(item.desc) : ''}</span>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+    
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
+    
+    function updateUIResources() {
+        document.getElementById("emeraldAmount").innerText = emeralds;
+        document.getElementById("woodKey").innerText = woodKey;
+        document.getElementById("netheriteKey").innerText = netheriteKey;
+    }
+    
+    function updatePityDisplay() {
+        document.getElementById("woodElitePity").innerText = pity.wood.elite;
+        document.getElementById("woodSpecialPity").innerText = pity.wood.special;
+        document.getElementById("netheriteElitePity").innerText = pity.netherite.elite;
+        document.getElementById("netheriteSpecialPity").innerText = pity.netherite.special;
+    }
+    
+    function updateStatsDisplay() {
+        document.getElementById("totalPacks").innerText = stats.totalPacks;
+        document.getElementById("statCommon").innerText = stats.itemsByRarity.Common || 0;
+        document.getElementById("statRare").innerText = stats.itemsByRarity.Rare || 0;
+        document.getElementById("statEpic").innerText = stats.itemsByRarity.Epic || 0;
+        document.getElementById("statLegendary").innerText = stats.itemsByRarity.Legendary || 0;
+        let total = Object.values(stats.itemsByRarity).reduce((a,b)=>a+b,0);
+        document.getElementById("totalCards").innerText = total;
+        let legCount = stats.itemsByRarity.Legendary || 0;
+        let rate = total === 0 ? 0 : (legCount / total * 100);
+        document.getElementById("legendaryRate").innerText = rate.toFixed(2) + "%";
+    }
+    
+    function updateHistoryDisplay() {
+        const historyDiv = document.getElementById("historyList");
+        if (history.length === 0) {
+            historyDiv.innerHTML = '<div style="color:#b49b6e;">暂无抽奖记录</div>';
+            return;
+        }
+        historyDiv.innerHTML = history.slice(0,15).map((h, idx) => {
+            return `<div class="history-entry">${idx+1}. ${escapeHtml(h.text)}</div>`;
+        }).join('');
+    }
+    
+    function resetResources() {
+        emeralds = 2000;
+        woodKey = 5;
+        netheriteKey = 2;
+        updateUIResources();
+    }
+    
+    function resetPity() {
+        pity.wood = { elite: 0, special: 0 };
+        pity.netherite = { elite: 0, special: 0 };
+        updatePityDisplay();
+    }
+    
+    function resetStats() {
+        stats = { totalPacks: 0, itemsByRarity: { Common:0, Rare:0, Epic:0, Legendary:0 } };
+        updateStatsDisplay();
+    }
+    
+    function clearHistory() {
+        history = [];
+        updateHistoryDisplay();
+    }
+    
+    function loadLootTable(jsonStr) {
+        try {
+            let parsed = JSON.parse(jsonStr);
+            if (!Array.isArray(parsed)) throw new Error("战利品表必须为数组");
+            for (let item of parsed) {
+                if (!item.name || !item.rarity) throw new Error(`缺少name或rarity: ${JSON.stringify(item)}`);
+                if (!["Common","Rare","Epic","Legendary"].includes(item.rarity)) {
+                    throw new Error(`稀有度错误: ${item.rarity} 必须是 Common/Rare/Epic/Legendary`);
+                }
+            }
+            lootTable = parsed;
+            alert(`成功加载 ${lootTable.length} 件战利品！`);
+            const rarities = new Set(lootTable.map(i=>i.rarity));
+            if (!rarities.has("Common")) console.warn("缺少普通(Common)物品");
+            if (!rarities.has("Rare")) console.warn("缺少稀有(Rare)物品");
+            if (!rarities.has("Epic")) console.warn("缺少史诗(Epic)物品");
+            if (!rarities.has("Legendary")) console.warn("缺少传说(Legendary)物品");
+        } catch(e) {
+            alert("JSON解析失败: " + e.message);
+        }
+    }
+    
+    function initDefault() {
+        lootTable = JSON.parse(JSON.stringify(DEFAULT_LOOT));
+        document.getElementById("cardsJsonEditor").value = JSON.stringify(DEFAULT_LOOT, null, 2);
+    }
+    
+    function bindEvents() {
+        document.querySelectorAll(".btn-open").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const pack = btn.getAttribute("data-pack");
+                const items = openChest(pack);
+                if (items) displayChestResult(items);
+                else displayChestResult(null);
+            });
+        });
+        document.getElementById("resetResourcesBtn").addEventListener("click", resetResources);
+        document.getElementById("resetPityBtn").addEventListener("click", resetPity);
+        document.getElementById("resetStatsBtn").addEventListener("click", resetStats);
+        document.getElementById("clearHistoryBtn").addEventListener("click", clearHistory);
+        document.getElementById("loadCardsBtn").addEventListener("click", () => {
+            const json = document.getElementById("cardsJsonEditor").value;
+            if (json.trim() === "") alert("请输入JSON战利品数据");
+            else loadLootTable(json);
+        });
+    }
+    
+    function init() {
+        initDefault();
+        bindEvents();
+        updateUIResources();
+        updatePityDisplay();
+        updateStatsDisplay();
+        updateHistoryDisplay();
+        displayChestResult(null);
+    }
+    init();
+</script>
+</body>
+</html>
