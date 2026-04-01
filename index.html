@@ -515,7 +515,7 @@
         let rewardType = Math.random();
         let rewardEmerald = 0, rewardWood = 0, rewardNetherite = 0;
         if (rewardType < 0.6) { // 绿宝石
-            rewardEmerald = Math.floor(Math.random() * 61) + 20; // 20-80
+            rewardEmerald = Math.floor(Math.random() * 90) + 20; // 20-80
         } else if (rewardType < 0.85) { // 木质钥匙
             rewardWood = Math.floor(Math.random() * 2) + 1; // 1-2
         } else { // 合金钥匙
@@ -600,7 +600,7 @@
                 alert("作弊指令: 获得1000绿宝石，10木质钥匙，5合金钥匙，并解锁所有图鉴！");
                 break;
             default:
-                alert("未知指令！可用指令: diamonds, woodenkey, netheritekey, legendary, cheatall");
+                alert("未知指令！");
                 return false;
         }
         updateUI();
@@ -610,7 +610,7 @@
     }
 
     function openCheatDialog() {
-        let cmd = prompt("请输入作弊指令:\n可用指令：\ndiamonds - 获得100绿宝石\nwoodenkey - 获得2木质钥匙\nnetheritekey - 获得1合金钥匙\nlegendary - 随机获得一个传说物品\ncheatall - 获得大量资源并解锁全部图鉴", "");
+        let cmd = prompt("请输入作弊指令");
         if (cmd !== null) cheatCommand(cmd);
     }
 
